@@ -58,10 +58,10 @@ async function run(){
         });
         
         app.get('/advertisesdItems', async(req, res)=>{
-            const query = {};
-            const cursor = categoryProductsCollection.find(query);
-            const advertisedItems = await cursor.toArray();
-            res.send(advertisedItems);
+            const availability = req.query.status;
+            const query = { status: availability };
+            const bookings = await categoryProductsCollection.find(query).toArray();
+            res.send(bookings);
         });
         
 
@@ -148,12 +148,21 @@ async function run(){
             res.send(advertisedItems);
         });
 
-        app.delete('/users/:id', async (req, res) => {
+        app.put('/myProduct/:id', async(req, res)=>{
             const id = req.params.id;
-            const filter = { _id: ObjectId(id) }
-            const result = await usersCollection.deleteOne(filter);
-            return res.send(result);
+            const status = req.body.status;
+            // console.log(status);
+            const query = {_id: ObjectId(id)};
+            const updateDoc = {
+                $set: {
+                  status: status
+                },
+              };
+            
+            const result = await categoryProductsCollection.updateOne(query, updateDoc);
+            res.send(result);
         })
+       
         
         app.delete('/myProducts/:id', async (req, res) => {
             const id = req.params.id;
@@ -161,6 +170,16 @@ async function run(){
             const result = await categoryProductsCollection.deleteOne(filter);
             return res.send(result);
         })
+
+
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const result = await usersCollection.deleteOne(filter);
+            return res.send(result);
+        })
+        
+      
 
     
         
