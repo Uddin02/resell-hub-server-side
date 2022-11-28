@@ -173,7 +173,6 @@ async function run(){
         })
 
 
-
         app.post('/addProduct', verifyJWT, verifySeller, async(req, res)=>{
             const product = req.body;
             const result =  await categoryProductsCollection.insertOne(product);
@@ -254,6 +253,20 @@ async function run(){
                 }
             }
             const updatedResult = await bookingCollection.updateOne(filter, updatedDoc)
+            res.send(result);
+        })
+
+        app.post('/users/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const updatedName = {
+
+                $set: {
+                    status: 'verified'
+                }
+
+            }
+            const result = await usersCollection.updateOne(query, updatedName);
             res.send(result);
         })
       
